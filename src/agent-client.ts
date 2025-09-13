@@ -61,7 +61,7 @@ class X402Agent {
     } catch (error: any) {
       if (error.response?.status === 402) {
         // Payment required!
-        const paymentChallenge = error.response.data.data.payment_challenge as PaymentChallenge;
+        const paymentChallenge = error.response.data.error.data.payment_challenge as PaymentChallenge;
         console.log(`💳 Payment required: ₹${paymentChallenge.amount} for ${toolName}`);
         
         // Handle payment based on strategy
@@ -90,7 +90,7 @@ class X402Agent {
         if (error.response?.status === 402) {
           pendingPayments.push({
             toolCall,
-            challenge: error.response.data.data.payment_challenge
+            challenge: error.response.data.error.data.payment_challenge
           });
         } else {
           throw error;
@@ -134,6 +134,16 @@ class X402Agent {
         'X-Agent-Name': this.config.name
       }
     });
+
+    // Check if we got a payment challenge
+    if (response.data.error?.code === 402) {
+      const error = new Error('Payment Required');
+      (error as any).response = { 
+        status: 402, 
+        data: response.data 
+      };
+      throw error;
+    }
 
     const content = response.data.content?.[0]?.text;
     if (content) {
