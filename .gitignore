@@ -1,0 +1,158 @@
+# 🔒 x402-MCP-UPI .gitignore
+# Secure files for revolutionary AI payment system
+
+# ======================================
+# 🔑 SECURITY - NEVER COMMIT THESE!
+# ======================================
+keys/
+*.pem
+*.key
+*.p12
+*.pfx
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ======================================
+# 📦 Dependencies
+# ======================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ======================================
+# 🏗️ Build outputs
+# ======================================
+dist/
+build/
+*.tsbuildinfo
+*.js.map
+
+# ======================================
+# 🗄️ Database files
+# ======================================
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# ======================================
+# 📋 Logs
+# ======================================
+logs/
+*.log
+*.log.*
+loglevel
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ======================================
+# 💻 IDE & Editor files
+# ======================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ======================================
+# 🧪 Testing
+# ======================================
+coverage/
+.nyc_output/
+.coverage/
+
+# ======================================
+# 📱 Mobile
+# ======================================
+.expo/
+.expo-shared/
+
+# ======================================
+# ⚡ Cache directories
+# ======================================
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist/
+
+# ======================================
+# 🔧 Tool specific
+# ======================================
+.eslintcache
+.stylelintcache
+
+# ======================================
+# 🌐 Runtime data
+# ======================================
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ======================================
+# 📊 Coverage directory used by tools like istanbul
+# ======================================
+coverage/
+*.lcov
+
+# ======================================
+# 🚀 Deployment
+# ======================================
+.vercel
+.netlify/
+
+# ======================================
+# 💰 Payment Gateway Keys (CRITICAL!)
+# ======================================
+# Real payment gateway credentials
+*_private_key*
+*_secret*
+*_api_key*
+payment_config.json
+gateway_credentials.*
+
+# ======================================
+# 🤖 MCP Server specific
+# ======================================
+mcp_logs/
+agent_data/
+receipts/
+
+# ======================================
+# 📝 Temporary files
+# ======================================
+tmp/
+temp/
+*.tmp
+*.temp
+
+# ======================================
+# 🔄 OS generated files
+# ======================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ======================================
+# 🎯 Project specific
+# ======================================
+# Keep demo keys for development
+!keys/README.md
+
+# But exclude production keys
+keys/production_*
+keys/live_*
+keys/*_prod.*

@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>x402-UPI Demo Client</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      padding: 24px; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #4f46e5;
+      margin-bottom: 8px;
+      font-size: 2.5rem;
+    }
+    
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 32px;
+    }
+    
+    .input-section {
+      margin-bottom: 24px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: #4f46e5;
+    }
+    
+    .pay-btn {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 12px;
+    }
+    
+    .pay-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    
+    .pay-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .challenge-section {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      text-align: center;
+    }
+    
+    .challenge-section h3 {
+      color: #1e293b;
+      margin-bottom: 16px;
+    }
+    
+    .payment-methods {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    
+    .payment-option {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      min-width: 200px;
+    }
+    
+    #qr { 
+      width: 200px; 
+      height: 200px; 
+      border: 1px solid #ddd; 
+      border-radius: 8px;
+      margin: 12px 0;
+    }
+    
+    .checkout-link {
+      display: inline-block;
+      background: #10b981;
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: background 0.2s;
+      margin-top: 12px;
+    }
+    
+    .checkout-link:hover {
+      background: #059669;
+    }
+    
+    .status {
+      margin: 16px 0;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+    
+    .status.pending {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #f59e0b;
+    }
+    
+    .status.paid {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+    
+    .result {
+      margin-top: 24px;
+      padding: 20px;
+      background: #f1f5f9;
+      border-left: 4px solid #4f46e5;
+      border-radius: 0 8px 8px 0;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+    }
+    
+    .payreq-info {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+    
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #4f46e5;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-left: 8px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💳 x402-UPI Demo</h1>
+    <p class="subtitle">Experience human-in-the-loop payment integration with UPI</p>
+    
+    <div class="input-section">
+      <label for="text">Enter text to summarize (₹5.00 per request):</label>
+      <textarea 
+        id="text" 
+        rows="6" 
+        placeholder="This is a long article about technology and innovation. Please summarize the key points for me..."
+      >This is a long article about technology and innovation in modern times. Technology has revolutionized how we work and communicate.
+Line 2: The impact of digital transformation is visible everywhere.
+Line 3: From smartphones to artificial intelligence, we live in an connected world.
+Line 4: This trend will continue to shape our future in unprecedented ways.</textarea>
+      <button id="payBtn" class="pay-btn">📝 Request Summary (Paid Service)</button>
+    </div>
+
+    <div id="challenge" class="challenge-section hidden"></div>
+    
+    <div id="status" class="status hidden"></div>
+    
+    <div id="result" class="result hidden"></div>
+  </div>
+
+  <script>
+    let currentPayreq = null;
+    let pollingInterval = null;
+    
+    document.getElementById('payBtn').addEventListener('click', async () => {
+      const payBtn = document.getElementById('payBtn');
+      const resultDiv = document.getElementById('result');
+      const challengeDiv = document.getElementById('challenge');
+      const statusDiv = document.getElementById('status');
+      
+      // Reset UI
+      resultDiv.classList.add('hidden');
+      challengeDiv.classList.add('hidden');
+      statusDiv.classList.add('hidden');
+      
+      // Disable button
+      payBtn.disabled = true;
+      payBtn.innerHTML = '⏳ Processing...';
+      
+      const text = document.getElementById('text').value;
+      
+      try {
+        const resp = await fetch('/generate-summary', { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json' }, 
+          body: JSON.stringify({ text }) 
+        });
+        
+        if (resp.status === 402) {
+          // Payment required
+          const j = await resp.json();
+          const c = j.payment_challenge;
+          currentPayreq = c.id;
+          
+          challengeDiv.innerHTML = `
+            <h3>💰 Payment Required: ₹${c.amount}</h3>
+            <div class="payment-methods">
+              <div class="payment-option">
+                <h4>📱 UPI QR Code</h4>
+                <img id='qr' src='${c.qr_png_url}' alt="UPI QR Code"/>
+                <p style="font-size: 12px; color: #666;">Scan with any UPI app</p>
+              </div>
+              <div class="payment-option">
+                <h4>🌐 Mock Payment</h4>
+                <p style="margin: 16px 0;">Simulate a real payment gateway experience</p>
+                <a href='${c.psp_checkout_url}' target='_blank' class="checkout-link">
+                  Open Mock Checkout
+                </a>
+                <p style="font-size: 12px; color: #666; margin-top: 8px;">Payment completes in 3 seconds</p>
+              </div>
+            </div>
+            <div class="payreq-info">
+              <strong>Payment ID:</strong> ${c.id}<br>
+              <strong>Expires:</strong> ${new Date(c.expires_at).toLocaleString()}
+            </div>
+          `;
+          challengeDiv.classList.remove('hidden');
+          
+          // Start polling for payment status
+          startStatusPolling(c.id);
+          
+        } else if (resp.ok) {
+          // Payment already completed or success
+          const result = await resp.json();
+          showResult(JSON.stringify(result, null, 2));
+        } else {
+          // Error
+          const error = await resp.json();
+          showResult(`Error: ${error.error}\\n${error.message || ''}`);
+        }
+        
+      } catch (e) {
+        showResult(`Network Error: ${e.message}`);
+      } finally {
+        payBtn.disabled = false;
+        payBtn.innerHTML = '📝 Request Summary (Paid Service)';
+      }
+    });
+    
+    function startStatusPolling(payreqId) {
+      const statusDiv = document.getElementById('status');
+      statusDiv.innerHTML = 'Status: PENDING <span class="spinner"></span>';
+      statusDiv.className = 'status pending';
+      statusDiv.classList.remove('hidden');
+      
+      pollingInterval = setInterval(async () => {
+        try {
+          const sresp = await fetch(`/payment/status?payreq=${payreqId}`);
+          const st = await sresp.json();
+          
+          if (st.status === 'PAID') {
+            clearInterval(pollingInterval);
+            statusDiv.innerHTML = '✅ Payment Confirmed!';
+            statusDiv.className = 'status paid';
+            
+            // Fetch receipt and retry original request
+            setTimeout(async () => {
+              await processPaymentSuccess(payreqId);
+            }, 1000);
+            
+          } else {
+            statusDiv.innerHTML = `Status: ${st.status} <span class="spinner"></span>`;
+          }
+        } catch (e) {
+          console.error('Polling error:', e);
+        }
+      }, 2000);
+    }
+    
+    async function processPaymentSuccess(payreqId) {
+      try {
+        // Fetch receipt
+        const r = await fetch(`/payment/receipt?payreq=${payreqId}`);
+        const jr = await r.json();
+        const receipt = jr.receipt;
+        
+        // Retry original request with receipt
+        const text = document.getElementById('text').value;
+        const final = await fetch('/generate-summary', { 
+          method: 'POST', 
+          headers: { 
+            'Content-Type': 'application/json', 
+            'Authorization': 'UPI-Receipt ' + receipt 
+          }, 
+          body: JSON.stringify({ text }) 
+        });
+        
+        const result = await final.json();
+        showResult(JSON.stringify(result, null, 2));
+        
+      } catch (e) {
+        showResult(`Error processing payment: ${e.message}`);
+      }
+    }
+    
+    function showResult(content) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = content;
+      resultDiv.classList.remove('hidden');
+      
+      // Hide challenge section
+      document.getElementById('challenge').classList.add('hidden');
+    }
+    
+    // Clean up on page unload
+    window.addEventListener('beforeunload', () => {
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+      }
+    });
+  </script>
+</body>
+</html>
